@@ -1,0 +1,130 @@
+<div class="container mt-4" style="max-width: 700px; margin: auto;">
+  <h2 class="mb-4">{{ isModification ? 'Modifier un logement' : 'Ajouter un logement' }}</h2>
+
+  <form (ngSubmit)="isModification ? enregistrerModification() : ajouterLogement()" class="row g-3" #logementForm="ngForm" style="margin-bottom: 2rem;">
+    <div class="col-md-6">
+      <label class="form-label">Référence</label>
+      <input
+        type="number"
+        [(ngModel)]="logement.reference"
+        name="reference"
+        required
+        class="form-control"
+        [readonly]="isModification"
+      />
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Adresse</label>
+      <input [(ngModel)]="logement.adresse" name="adresse" required class="form-control" />
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Délégation</label>
+      <input [(ngModel)]="logement.delegation" name="delegation" required class="form-control" />
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Gouvernorat</label>
+      <input [(ngModel)]="logement.gouvernorat" name="gouvernorat" required class="form-control" />
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Type</label>
+      <input [(ngModel)]="logement.type" name="type" required class="form-control" />
+    </div>
+
+    <div class="col-md-12">
+      <label class="form-label">Description</label>
+      <textarea [(ngModel)]="logement.description" name="description" class="form-control"></textarea>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Prix</label>
+      <input type="number" [(ngModel)]="logement.prix" name="prix" required class="form-control" />
+    </div>
+
+    <div class="col-12 d-flex align-items-center" style="gap: 15px;">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="logementForm.invalid"
+        style="flex: 1; height: 40px; min-width: 140px;"
+      >
+        {{ isModification ? 'Enregistrer modification' : 'Ajouter' }}
+      </button>
+      <button
+        *ngIf="isModification"
+        type="button"
+        class="btn btn-secondary"
+        style="flex: 1; height: 40px; min-width: 140px;"
+        (click)="logement = getEmptyLogement(); isModification = false;"
+      >
+        Annuler
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="container-fluid mt-4">
+  <h3>Liste des logements</h3>
+
+  <!-- Barre de recherche -->
+  <div class="mb-3" style="max-width: 400px;">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Rechercher par référence ou délégation..."
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="filtrerLogements()"
+    />
+  </div>
+
+  <table
+    class="table table-striped mt-3"
+    style="table-layout: fixed; width: 100%;"
+  >
+    <thead>
+      <tr>
+        <th style="width: 12.5%;">Référence</th>
+        <th style="width: 12.5%;">Adresse</th>
+        <th style="width: 12.5%;">Délégation</th>
+        <th style="width: 12.5%;">Gouvernorat</th>
+        <th style="width: 12.5%;">Type</th>
+        <th style="width: 12.5%;">Description</th>
+        <th style="width: 12.5%;">Prix (DT)</th>
+        <th style="width: 12.5%;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let l of logementsFiltres">
+        <td style="overflow-wrap: break-word;">{{ l.reference }}</td>
+        <td style="overflow-wrap: break-word;">{{ l.adresse }}</td>
+        <td style="overflow-wrap: break-word;">{{ l.delegation }}</td>
+        <td style="overflow-wrap: break-word;">{{ l.gouvernorat }}</td>
+        <td style="overflow-wrap: break-word;">{{ l.type }}</td>
+        <td style="overflow-wrap: break-word;">{{ l.description }}</td>
+        <td style="overflow-wrap: break-word;">{{ l.prix }}</td>
+        <td>
+          <button
+            class="btn btn-warning btn-sm me-2"
+            style="width: 70px;"
+            (click)="modifierLogement(l)"
+          >
+            Modifier
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            style="width: 70px;"
+            (click)="supprimerLogement(l.reference)"
+          >
+            Supprimer
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="logementsFiltres.length === 0">
+        <td colspan="8" class="text-center">Aucun logement trouvé.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
